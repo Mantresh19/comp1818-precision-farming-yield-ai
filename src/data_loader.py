@@ -4,6 +4,10 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.compose import ColumnTransformer
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+DEFAULT_CSV = PROJECT_ROOT / "data" / "crop_yield.csv"
 
 def load_and_preprocess_data(
     csv_path: str = "data/crop_yield.csv",
@@ -21,7 +25,7 @@ def load_and_preprocess_data(
     num_features = ["Year", "average_rain_fall_mm_per_year", "pesticides_tonnes", "avg_temp"]
     cat_features = ["Area", "Item"]
 
-    x = df[num_features + cat_features]
+    X = df[num_features + cat_features]
     y = df["yield_tonnes_ha"].values
 
     X_temp, X_test, y_temp, y_test = train_test_split(
@@ -41,9 +45,9 @@ def load_and_preprocess_data(
         ]
     )
 
-    X_train_proc = preprocessor.fit_transform(X-train)
-    X_val_proc = preprocessor.transform(X-val)
-    X_test = preprocessor.transform(X_test)
+    X_train_proc = preprocessor.fit_transform(X_train)
+    X_val_proc = preprocessor.transform(X_val)
+    X_test_proc = preprocessor.transform(X_test)
 
     encoded_cat_names = preprocessor.named_transformers_["cat"].get_feature_names_out(cat_features).tolist()
     # we're writing this line to get to know exactly the column names before our python was giving us a list eg [0,1,0,0,0,1
