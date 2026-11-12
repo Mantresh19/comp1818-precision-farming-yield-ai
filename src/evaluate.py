@@ -3,7 +3,7 @@ import sys
 from typing import Dict
 import numpy as np 
 import pandas as pd
-from sklearn.metrics import mean_squarede_error, mean_absolute_error, r2_score
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
 def compute_metrices(y_true: np.ndarray, y_pred: np.ndarray) -> Dict[str, float]:
     rmse = float(np.sqrt(mean_squared_error(y_true, y_pred)))
@@ -31,6 +31,8 @@ def evaluate_trivial_baselines(
         fill_value=np.mean(y_train)
         )
     
+    results["Trivial: Global Mean"] = compute_metrices(y_test, mean_pred)
+    
     median_pred = np.full(
         shape=len(y_test),
         fill_value=np.median(y_train)
@@ -49,21 +51,20 @@ def evaluate_trivial_baselines(
 
     return results
 
-    def format_results_table(results: Dict[str, Dict[str, float]]) -> pd.DataFrame:
-        df = pd.DataFrame.from_dict(results, orient="index")
-        df.index.name = "Model"
-        return df
+def format_results_table(results: Dict[str, Dict[str, float]]) -> pd.DataFrame:
+    df = pd.DataFrame.from_dict(results, orient="index")
+    df.index.name = "Model"
+    return df
 
-    if __name__ == "__main__":
-        sys.path.append(str(Path(__file__).resolve().parent.parent))
-        from src.data_loader import load_and_preprocess_data
+if __name__ == "__main__":
+    sys.path.append(str(Path(__file__).resolve().parent.parent))
+    from src.data_loader import load_and_preprocess_data
 
-        print("Loading data and evaluating trivinal baselines")
-        _,y_tr,_,_,_,y_te,_,_ = load_and_preprocess_data()
+    print("Loading data and evaluating trivinal baselines")
+    _,y_tr,_,_,_,y_te,_,_ = load_and_preprocess_data()
 
-        baseline_results = evaluate_trivial_baselines(y_tr, y_te)
-        table = format_results_table(baseline_results)
+    baseline_results = evaluate_trivial_baselines(y_tr, y_te)
+    table = format_results_table(baseline_results)
 
-        print("\n Trival Baseline Benchmarks (Test Set) ")
-        print(table.to_string())
-
+    print("\n Trival Baseline Benchmarks (Test Set) ")
+    print(table.to_string())
