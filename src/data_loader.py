@@ -15,6 +15,9 @@ def load_and_preprocess_data(
     val_size: float = 0.15,
     random_state: int = 42
 ) -> Tuple [np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, ColumnTransformer, List[str]]:
+    if not Path(csv_path).exists():
+        csv_path = DEFAULT_CSV
+
     df = pd.read_csv(csv_path)
 
     if "Unnamed: 0" in df.columns:
